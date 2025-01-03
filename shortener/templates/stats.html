@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <h2 class="card-title mb-4">URL Statistics</h2>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Original URL</th>
+                        <th>Short URL</th>
+                        <th>Clicks</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for url in urls %}
+                        <tr>
+                            <td>{{ url.original_url|truncatechars:50 }}</td>
+                            <td>
+                                <a href="{{ url.get_absolute_url }}" target="_blank">
+                                    {{ url.get_absolute_url }}
+                                </a>
+                            </td>
+                            <td>{{ url.clicks }}</td>
+                            <td>{{ url.created_at|date:"M d, Y" }}</td>
+                            <td>
+                                <a href="{% url 'shortener:url_detail_stats' url.short_code %}"
+                                   class="btn btn-sm btn-info">
+                                    <i class="fas fa-chart-bar"></i>
+                                </a>
+                                <form method="post" action="{% url 'shortener:delete_url' url.short_code %}"
+                                      class="d-inline"
+                                      onsubmit="return confirm('Are you sure?')">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center">No URLs found</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

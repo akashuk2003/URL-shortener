@@ -1,0 +1,40 @@
+<!-- templates/shortener/success.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body text-center">
+                <h2 class="card-title mb-4">URL Shortened Successfully!</h2>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" value="{{ url.get_absolute_url }}" id="shortUrl" readonly>
+                    <button class="btn btn-primary" onclick="copyToClipboard()">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+                <div class="mt-3">
+                    <p>Original URL: <a href="{{ url.original_url }}" target="_blank">{{ url.original_url|truncatechars:50 }}</a></p>
+                    <a href="{% url 'shortener:home' %}" class="btn btn-secondary">Shorten Another URL</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyToClipboard() {
+    var copyText = document.getElementById("shortUrl");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999); // For mobile devices
+    document.execCommand("copy");
+
+    var button = document.querySelector('.btn-primary');
+    var originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+    setTimeout(function() {
+        button.innerHTML = originalText;
+    }, 2000);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,53 @@
+<!-- templates/shortener/home.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Shorten Your URL</h2>
+                <form method="post" action="{% url 'shortener:home' %}">  <!-- Updated this line -->
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        {{ form.original_url }}
+                        {% if form.original_url.errors %}
+                            <div class="text-danger">
+                                {{ form.original_url.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Shorten URL</button>
+                </form>
+            </div>
+        </div>
+
+        {% if recent_urls %}
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h3 class="card-title">Recent URLs</h3>
+                    <div class="list-group">
+                        {% for url in recent_urls %}
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ url.original_url|truncatechars:50 }}</h6>
+                                        <small class="text-muted">
+                                            Shortened: <a href="{{ url.get_absolute_url }}" target="_blank">
+                                                {{ url.get_absolute_url }}
+                                            </a>
+                                        </small>
+                                    </div>
+                                    <span class="badge bg-primary rounded-pill">
+                                        {{ url.clicks }} clicks
+                                    </span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
